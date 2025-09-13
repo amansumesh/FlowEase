@@ -1,0 +1,16 @@
+# Ignore Node.js dependencies in frontend
+frontend/node_modules/
+
+# Ignore build/dist output
+frontend/build/
+frontend/dist/
+
+# Ignore environment files
+frontend/.env
+
+# Logs
+frontend/*.log
+
+# OS / Editor system files
+.DS_Store
+Thumbs.db
