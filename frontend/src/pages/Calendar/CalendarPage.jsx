@@ -1,11 +1,22 @@
-import React from 'react'
+import React, { useState } from "react";
+import CalendarView from "./CalendarView";
+import EventsComponents from "./EventsComponent";
+import events from "./events"; 
 
 const CalendarPage = () => {
-  return (
-    <div>
-      <h1>CalendarPage</h1>
-    </div>
-  )
-}
+  const [selectedDate, setSelectedDate] = useState(null);
 
-export default CalendarPage
+  return (
+    <div className="flex-1 p-6">
+      <CalendarView
+        events={events}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+      />
+
+      <EventsComponents selectedDate={selectedDate} events={events} />
+    </div>
+  );
+};
+
+export default CalendarPage;
