@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, CheckSquare, Bell, BarChart2, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "../axiosConfig";
 
 const Sidebar = ({ active, setActive }) => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get("/api/auth/me");
+        if (res.data.success) {
+          setUser(res.data.user);
+        } else {
+          navigate("/"); // redirect if not logged in
+        }
+      } catch (err) {
+        navigate("/"); // redirect if not logged in
+      }
+    };
+    fetchUser();
+  }, [navigate]);
 
   const menu = [
     { name: "Tasks", icon: <CheckSquare size={20} />, key: "tasks", path: "/tasks" },
@@ -36,10 +54,14 @@ const Sidebar = ({ active, setActive }) => {
       </div>
 
       <div className="p-4 bg-purple-600 rounded-lg m-3 flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-purple-400 flex items-center justify-center font-bold">J</div>
+        <img
+          src={user?.profilePic || "/default-avatar.png"}
+          alt="profile"
+          className="h-10 w-10 rounded-full"
+        />
         <div>
-          <p className="text-sm font-semibold text-white/85">John Doe</p>
-          <p className="text-xs text-white/85">john@example.com</p>
+          <p className="text-sm font-semibold text-white/85">{user?.name || "User"}</p>
+          <p className="text-xs text-white/85">{user?.email || "user@example.com"}</p>
         </div>
       </div>
     </div>

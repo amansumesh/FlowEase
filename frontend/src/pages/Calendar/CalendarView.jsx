@@ -32,10 +32,10 @@ const CalendarView = ({ events, selectedDate, setSelectedDate }) => {
         <div
           key={d}
           onClick={() => handleDateClick(date)}
-          className={`h-24 border rounded-[20px] bg-white flex flex-col items-start p-2 text-gray-700 font-bold cursor-pointer font-inter ${
+          className={`h-24 border rounded-[20px] flex flex-col items-start p-2 text-gray-700 font-bold cursor-pointer font-inter ${
             selectedDate && dayjs(selectedDate).isSame(date, "day")
               ? "bg-purple-300 border-purple-500"
-              : ""
+              : "bg-white"
           }`}
         >
           <span>{d}</span>

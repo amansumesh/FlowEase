@@ -1,9 +1,9 @@
 import React from "react";
-import { FcGoogle } from "react-icons/fc"; 
+import { FcGoogle } from "react-icons/fc";
+
 const LandingPage = () => {
   const handleGoogleSignIn = () => {
-    // Space for actual authentication logic
-    console.log("Google sign-in clicked (auth logic goes here)");
+    window.location.href = "http://localhost:5000/api/auth/login";
   };
 
   return (

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const Header = ({ active, onLogout }) => {
+
+const Header = ({ active }) => {
   const [searchValue, setSearchValue] = useState("");
   const [title, setTitle] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     switch (active) {
@@ -31,6 +34,24 @@ const Header = ({ active, onLogout }) => {
     setSearchValue(e.target.value);
   };
 
+  const handleLogout = async () => {
+    window.location.href ="http://localhost:5000/api/auth/logout";
+  //   try {
+
+  //     const res = await axios.post(
+  //     "http://localhost:5000/api/auth/logout",
+  //     {},
+  //     { withCredentials: true }
+  //   );
+  //   return res.data;
+  // } 
+  // catch (err){
+  //   console.error("Logout failed:", err);
+  //   throw err;
+  // }
+
+  };
+
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow-md rounded-lg font-inter">
       <div className="flex items-center space-x-4">
@@ -52,8 +73,9 @@ const Header = ({ active, onLogout }) => {
         </div>
 
         <button
-          onClick={onLogout}
-          className="px-4 py-2 bg-purple-700 text-white font-bold rounded-full hover:bg-purple-800 transition-colors duration-200">
+          onClick={handleLogout}
+          className="px-4 py-2 bg-purple-700 text-white font-bold rounded-full hover:bg-purple-800 transition-colors duration-200"
+        >
           Logout
         </button>
       </div>
