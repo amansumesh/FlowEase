@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 
-const Header = ({ active }) => {
+const Header = ({ active, onMenuClick }) => {
   const [searchValue, setSearchValue] = useState("");
   const [title, setTitle] = useState("");
   const navigate = useNavigate();
@@ -55,6 +55,14 @@ const Header = ({ active }) => {
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow-md rounded-lg font-inter">
       <div className="flex items-center space-x-4">
+        <button
+          type="button"
+          aria-label="Open sidebar"
+          onClick={onMenuClick}
+          className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          <Menu size={22} />
+        </button>
         <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
       </div>
 

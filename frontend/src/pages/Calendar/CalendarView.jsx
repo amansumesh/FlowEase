@@ -26,7 +26,10 @@ const CalendarView = ({ events, selectedDate, setSelectedDate }) => {
 
     for (let d = 1; d <= daysInMonth; d++) {
       const date = currentMonth.date(d);
-      const dayEvents = events.filter((e) => dayjs(e.date).isSame(date, "day"));
+      const dayTasks = events.filter((task) => {
+        if (!task.deadline) return false;
+        return dayjs(task.deadline).isSame(date, "day");
+      });
 
       days.push(
         <div
@@ -39,12 +42,16 @@ const CalendarView = ({ events, selectedDate, setSelectedDate }) => {
           }`}
         >
           <span>{d}</span>
-          <div className="flex gap-1 mt-1">
-            {dayEvents.map((ev, i) => (
+          <div className="flex gap-1 mt-1 flex-wrap">
+            {dayTasks.map((task, i) => (
               <span
                 key={i}
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: ev.color }}
+                className={`w-2 h-2 rounded-full ${
+                  task.completed ? 'bg-green-500' : 
+                  task.priority === 'High' ? 'bg-red-500' :
+                  task.priority === 'Medium' ? 'bg-yellow-500' : 'bg-blue-500'
+                }`}
+                title={`${task.task_title} (${task.priority})`}
               ></span>
             ))}
           </div>

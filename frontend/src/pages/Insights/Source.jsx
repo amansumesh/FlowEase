@@ -23,7 +23,7 @@ function Source() {
   return (
     <div className="p-5 flex flex-col bg-white rounded-md">
       <h3 className="mb-2 font-semibold">Task Sources</h3>
-      <div className="items-center">
+      <div className="flex justify-center items-center">
         <BarChart width={300} height={250} data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
