@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Mail, Calendar, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import { useTasks } from "../../contexts/TaskContext";
-import "./index.css";
 
 function TasksPage() {
   const [selectedTab, setSelectedTab] = useState("all");
@@ -21,13 +20,25 @@ function TasksPage() {
 
   const statusBadge = (task) => {
     if (task.completed)
-      return <span className="px-3 py-1 rounded-xl bg-green-100 text-green-600">Completed</span>;
+      return (
+        <span className="px-3 py-1 rounded-xl bg-green-100 text-green-600">
+          Completed
+        </span>
+      );
     if (task.deadline) {
       const dueDate = new Date(task.deadline);
       if (dueDate < new Date())
-        return <span className="px-3 py-1 rounded-xl bg-red-100 text-red-600">Overdue</span>;
+        return (
+          <span className="px-3 py-1 rounded-xl bg-red-100 text-red-600">
+            Overdue
+          </span>
+        );
     }
-    return <span className="px-3 py-1 rounded-xl bg-gray-100 text-gray-600">Pending</span>;
+    return (
+      <span className="px-3 py-1 rounded-xl bg-gray-100 text-gray-600">
+        Pending
+      </span>
+    );
   };
 
   const formatDate = (isoString) => {
@@ -43,8 +54,9 @@ function TasksPage() {
           <button
             key={tab}
             onClick={() => setSelectedTab(tab)}
-            className={`px-4 py-2 rounded-xl transition ${selectedTab === tab ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
+            className={`px-4 py-2 rounded-xl transition ${
+              selectedTab === tab ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -68,7 +80,9 @@ function TasksPage() {
               className="grid grid-cols-6 gap-4 items-center p-3 rounded-xl hover:bg-gray-50 transition"
             >
               <div className="col-span-1">
-                <div className="font-medium text-gray-800">{task.task_title}</div>
+                <div className="font-medium text-gray-800">
+                  {task.task_title}
+                </div>
               </div>
 
               {/* Source */}
@@ -89,7 +103,9 @@ function TasksPage() {
 
               {/* Priority */}
               <span
-                className={`px-3 py-1 rounded-xl text-sm font-medium ${priorityColors[task.priority]}`}
+                className={`px-3 py-1 rounded-xl text-sm font-medium ${
+                  priorityColors[task.priority]
+                }`}
               >
                 {task.priority}
               </span>
@@ -101,7 +117,11 @@ function TasksPage() {
               <div className="flex justify-center gap-2">
                 <button
                   onClick={() => handleComplete(task.id)}
-                  className={`${task.completed ? 'text-green-600' : 'text-gray-400 hover:text-green-600'} transition-colors`}
+                  className={`${
+                    task.completed
+                      ? "text-green-600"
+                      : "text-gray-400 hover:text-green-600"
+                  } transition-colors`}
                 >
                   <CheckCircle2 className="w-5 h-5" />
                 </button>
