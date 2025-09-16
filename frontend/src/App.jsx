@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { TaskProvider } from "./contexts/TaskContext";
 import Layout from "./components/Layout";
 import TasksPage from "./pages/Tasks/TasksPage";
 import CalendarPage from "./pages/Calendar/CalendarPage";
@@ -10,27 +11,29 @@ import LandingPage from "./pages/LandingPage";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
+    <TaskProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
 
-        <Route
-          path="/*"
-          element={
-            <Layout>
-              <Routes>
-                <Route path="tasks" element={<TasksPage />} />
-                <Route path="calendar" element={<CalendarPage />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="insights" element={<InsightsPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="*" element={<TasksPage />} /> 
-              </Routes>
-            </Layout>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/*"
+            element={
+              <Layout>
+                <Routes>
+                  <Route path="tasks" element={<TasksPage />} />
+                  <Route path="calendar" element={<CalendarPage />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="insights" element={<InsightsPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                  <Route path="*" element={<TasksPage />} /> 
+                </Routes>
+              </Layout>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </TaskProvider>
   );
 };
 

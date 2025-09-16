@@ -15,7 +15,7 @@ function PriorityDonut() {
   return (
     <div className="p-5 flex bg-white rounded-md flex-col ">
       <h3 className="mb-2 font-semibold">Task Priorities</h3>
-      <div>
+      <div className="flex justify-center items-center">
         <PieChart width={250} height={250}>
           <Pie
             data={chartData}

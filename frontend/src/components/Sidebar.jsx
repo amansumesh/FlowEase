@@ -52,8 +52,10 @@ const Sidebar = ({ active, setActive }) => {
           ))}
         </nav>
       </div>
-
-      <div className="p-4 bg-purple-600 rounded-lg m-3 flex items-center gap-3">
+      <div className="flex items-center justify-center mb-4">
+        <img src="src/assets/sih-logo.png" alt="sih-logo" className="w-32 h-auto" />
+      </div>
+      <div className="p-2 bg-purple-600 rounded-lg m-2 flex items-center gap-3">
         <img
           src={user?.profilePic || "/default-avatar.png"}
           alt="profile"
