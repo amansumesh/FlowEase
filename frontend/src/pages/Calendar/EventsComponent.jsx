@@ -59,7 +59,7 @@ const Events = ({ selectedDate, events }) => {
                       <h4 className={`font-medium ${task.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
                         {task.task_title}
                       </h4>
-                      <p className="text-sm text-gray-600 mt-1">{task.task_description}</p>
+                      {/* description removed per requirement */}
                       <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />

@@ -1,11 +1,11 @@
-import React from 'react'
-
+import React from "react";
+import Reminder from "./Reminder";  
 const NotificationsPage = () => {
   return (
-    <div>
-      <h1>NotificationsPage</h1>
+    <div className="p-6">
+      <Reminder />  
     </div>
-  )
-}
+  );
+};
 
-export default NotificationsPage
+export default NotificationsPage;

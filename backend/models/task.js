@@ -6,9 +6,16 @@ const taskSchema = mongoose.Schema({
         ref : "User",
         required : true
     },
+    // Keep legacy capitalized field for backward compatibility
     Source : {
         type : String,
-        enum : ["Calender", "Gmail"],
+        enum : ["Calendar", "Gmail", "Calender"],
+        required : false
+    },
+    // Add canonical lowercase field to match incoming data
+    source : {
+        type : String,
+        enum : ["Calendar", "Gmail", "Calender"],
         required : true
     },
     deadline : {
@@ -28,6 +35,6 @@ const taskSchema = mongoose.Schema({
         type : String
     }
     
-});
+}, { timestamps: true });
 
 export default mongoose.model("Task", taskSchema);

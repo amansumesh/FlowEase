@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { initialTasks } from '../data/tasksData';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import axios from '../axiosConfig';
 
 const TaskContext = createContext();
 
@@ -13,7 +13,20 @@ export const useTasks = () => {
 
 
 export const TaskProvider = ({ children }) => {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const res = await axios.get('/api/tasks');
+        if (isMounted) setTasks(res.data);
+      } catch (e) {
+        console.error('Failed to load tasks', e);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, []);
 
   const toggleTaskCompletion = useCallback((taskId) => {
     setTasks(prevTasks => 

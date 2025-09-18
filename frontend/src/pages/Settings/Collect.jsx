@@ -7,8 +7,32 @@ function Collect() {
   const [phone, setPhone] = useState("");
 
   const handleSubmit = async (e) => {
-    console.log({ clientID, clientSecret, phone });
-  };
+    try{
+      const response = await fetch("http://localhost:5000/api/settings/google",{
+        method : "POST",
+        headers : { "Content-Type": "application/json" },
+        credentials : "include", 
+        body : JSON.stringify({
+          clientId : clientID,
+          clientSecret,
+          phoneNumber : phone,
+        }),
+    });
+
+    const data = await response.json();
+      if (data.success){
+        setMessage("Settings saved successfully!");
+      } 
+      else{
+        setMessage(data.message);
+      }
+    } 
+    catch(error){
+        console.error("Error saving settings:", error);
+        setMessage("Server error");
+    }
+    };
+
 
   return (
     <div className="w-[800px] gap-3 p-5 rounded-2xl bg-white">

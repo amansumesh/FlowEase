@@ -5,6 +5,8 @@ import authRoutes from "./routes/authRoutes.js"
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import settingsRoutes from "./routes/settingsRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 
 dotenv.config();
 
@@ -34,6 +36,8 @@ app.use(session({
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/settings", settingsRoutes); 
+app.use("/api/tasks", taskRoutes);
 
 connectToDb();
 

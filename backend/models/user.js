@@ -22,7 +22,18 @@ const userSchema = new mongoose.Schema({
     },
     refreshToken : {
         type : String
+    },
+    clientId : {
+        type : String
+    },
+    clientSecret : {
+        type : String
+    },
+    phoneNumber : {
+        type: String,
+        match: [/^[0-9]{10}$/, "Invalid phone number format"]
     }
+
 },{timestamps : true});
 
 export default mongoose.model("User", userSchema);
