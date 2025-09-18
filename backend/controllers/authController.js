@@ -23,22 +23,24 @@ const callback = async(req, res)=>{
         });
 
         const {data} = await oauth2.userinfo.get();
-        let user = await User.findOneAndUpdate(
-            {email : data.email},
-            {
-                googleId: data.id,
-                name: data.name,
-                email: data.email, 
-                profilePic: data.picture, 
-                accessToken: tokens.access_token,
-                refreshToken: tokens.refresh_token
-            },
-            {
-                upsert : true, 
-                new: true
+        const updateData ={
+            googleId: data.id,
+            name: data.name,
+            email: data.email, 
+            profilePic: data.picture, 
+            accessToken: tokens.access_token,
+            refreshToken: tokens.refresh_token
+         };
+            if (tokens.refresh_token){
+                updateData.refreshToken = tokens.refresh_token;
             }
-        );
-
+            let user = await User.findOneAndUpdate(
+                {email : data.email},
+                {
+                    upsert : true, 
+                    new: true
+                }
+            );
         req.session.user = user;
        
         // res.status(202).json({
@@ -47,7 +49,6 @@ const callback = async(req, res)=>{
         // });
 
         res.redirect("http://localhost:5173/tasks");
-
     }
     catch(error) {
         console.error("Google auth error:", error);

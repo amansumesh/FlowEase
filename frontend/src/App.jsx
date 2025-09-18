@@ -8,6 +8,7 @@ import NotificationsPage from "./pages/Notifications/NotificationsPage";
 import InsightsPage from "./pages/Insights/InsightsPage";
 import SettingsPage from "./pages/Settings/SettingsPage";
 import LandingPage from "./pages/LandingPage"; 
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route
             path="/*"
             element={
+              <ProtectedRoute>
               <Layout>
                 <Routes>
                   <Route path="tasks" element={<TasksPage />} />
@@ -29,6 +31,7 @@ const App = () => {
                   <Route path="*" element={<TasksPage />} /> 
                 </Routes>
               </Layout>
+              </ProtectedRoute>
             }
           />
         </Routes>
