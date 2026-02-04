@@ -35,23 +35,21 @@ const CalendarView = ({ events, selectedDate, setSelectedDate }) => {
         <div
           key={d}
           onClick={() => handleDateClick(date)}
-          className={`h-24 border rounded-[20px] flex flex-col items-start p-2 text-gray-700 font-bold cursor-pointer font-inter ${
-            selectedDate && dayjs(selectedDate).isSame(date, "day")
+          className={`h-24 border rounded-[20px] flex flex-col items-start p-2 text-gray-700 font-bold cursor-pointer font-inter ${selectedDate && dayjs(selectedDate).isSame(date, "day")
               ? "bg-purple-300 border-purple-500"
               : "bg-white"
-          }`}
+            }`}
         >
           <span>{d}</span>
           <div className="flex gap-1 mt-1 flex-wrap">
             {dayTasks.map((task, i) => (
               <span
                 key={i}
-                className={`w-2 h-2 rounded-full ${
-                  task.completed ? 'bg-green-500' : 
-                  task.priority === 'High' ? 'bg-red-500' :
-                  task.priority === 'Medium' ? 'bg-yellow-500' : 'bg-blue-500'
-                }`}
-                title={`${task.task_title} (${task.priority})`}
+                className={`w-2 h-2 rounded-full ${task.completed ? 'bg-green-500' :
+                    task.priority === 'High' ? 'bg-red-500' :
+                      task.priority === 'Medium' ? 'bg-yellow-500' : 'bg-blue-500'
+                  }`}
+                title={`${task.action} (${task.priority})`}
               ></span>
             ))}
           </div>

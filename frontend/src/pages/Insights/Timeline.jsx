@@ -39,19 +39,24 @@ function Timeline() {
     "November",
     "December",
   ];
+  const currentMonthIndex = new Date().getMonth();
+  const getMonthName = (offset) => {
+    return Months[(currentMonthIndex - offset + 12) % 12];
+  };
+
   const chartData = [
     {
-      month: Months[new Date().getMonth() - 2],
+      month: getMonthName(2),
       Completed: stats.m2_completed,
       Pending: stats.m2_pending,
     },
     {
-      month: Months[new Date().getMonth() - 1],
+      month: getMonthName(1),
       Completed: stats.m1_completed,
       Pending: stats.m1_pending,
     },
     {
-      month: Months[new Date().getMonth()],
+      month: getMonthName(0),
       Completed: stats.m_completed,
       Pending: stats.m_pending,
     },

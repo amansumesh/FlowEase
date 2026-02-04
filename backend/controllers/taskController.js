@@ -1,7 +1,7 @@
 import Task from "../models/task.js";
 
-export const getTaskStats = async(req, res)=>{
-    try{
+export const getTaskStats = async (req, res) => {
+    try {
         const userId = req.session.user?._id;
         const query = userId ? { userID: userId } : {};
         const tasks = await Task.find(query);
@@ -22,7 +22,7 @@ export const getTaskStats = async(req, res)=>{
         const previousMonth = (currentMonth - 1 + 12) % 12;
         const twoMonthsAgo = (currentMonth - 2 + 12) % 12;
 
-        const getMonthStats = (month)=>{
+        const getMonthStats = (month) => {
             const monthTasks = tasks.filter(
                 (t) => t.deadline && new Date(t.deadline).getUTCMonth() === month
             );
@@ -37,14 +37,14 @@ export const getTaskStats = async(req, res)=>{
 
         // 4. change & changeType
         const thisMonthRate =
-        mStats.completed + mStats.pending > 0
-        ? (mStats.completed / (mStats.completed + mStats.pending)) * 100
-        : 0;
+            mStats.completed + mStats.pending > 0
+                ? (mStats.completed / (mStats.completed + mStats.pending)) * 100
+                : 0;
 
         const lastMonthRate =
-         m1Stats.completed + m1Stats.pending > 0
-        ? (m1Stats.completed / (m1Stats.completed + m1Stats.pending)) * 100
-        : 0;
+            m1Stats.completed + m1Stats.pending > 0
+                ? (m1Stats.completed / (m1Stats.completed + m1Stats.pending)) * 100
+                : 0;
 
         const change = thisMonthRate - lastMonthRate;
         const changeType = change >= 0 ? "increase" : "decrease";
@@ -60,17 +60,17 @@ export const getTaskStats = async(req, res)=>{
 
         // 6. priorities
         const priorities = tasks.reduce(
-            (acc, task) =>{
+            (acc, task) => {
                 acc[task.priority] = (acc[task.priority] || 0) + 1;
                 return acc;
             },
-            {High: 0, Medium: 0, Low: 0}
+            { High: 0, Medium: 0, Low: 0 }
         );
 
         // 7. avg time (in hours)
         let totalTime = 0,
-        countCompleted = 0;
-        completedTasks.forEach((t)=>{
+            countCompleted = 0;
+        completedTasks.forEach((t) => {
             if (t.completedAt && t.createdAt) {
                 totalTime += (new Date(t.completedAt) - new Date(t.createdAt)) / (1000 * 60 * 60);
                 countCompleted++;
@@ -94,8 +94,8 @@ export const getTaskStats = async(req, res)=>{
             m_completed: mStats.completed,
             m_pending: mStats.pending,
         });
-    } 
-    catch(error){
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error fetching stats" });
     }
@@ -108,7 +108,7 @@ export const listTasks = async (req, res) => {
         const tasks = await Task.find(query).sort({ deadline: 1 });
         const mapped = tasks.map(t => ({
             id: String(t._id),
-            task_title: t.action,
+            action: t.action,
             task_description: "",
             deadline: t.deadline,
             priority: t.priority,
@@ -118,9 +118,51 @@ export const listTasks = async (req, res) => {
             completed: t.status === "Completed",
             created_at: t.createdAt
         }));
-        res.json(mapped);
+        res.json({
+            success: true,
+            tasks: mapped
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error fetching tasks" });
+    }
+};
+
+export const createTask = async (req, res) => {
+    try {
+        const { action, deadline, priority, source } = req.body;
+        const userId = req.session.user?._id;
+        const task = await Task.create({
+            userID: userId,
+            action,
+            deadline,
+            priority,
+            source: source || "Manual",
+            status: "Pending"
+        });
+        res.json({ success: true, task });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const updateTask = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body;
+        const task = await Task.findByIdAndUpdate(id, updates, { new: true });
+        res.json({ success: true, task });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+export const deleteTask = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Task.findByIdAndDelete(id);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
 };

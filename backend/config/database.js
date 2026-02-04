@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 
 dotenv.config();
 
-const connectToDb = async()=>{
-    try{
+const connectToDb = async () => {
+    try {
         await mongoose.connect(process.env.DB_ADDRESS);
         console.log(`MongoDB connected successfully`);
     }
-    catch(error){
-        console.error(`Database connection failed!!`);
+    catch (error) {
+        console.error(`Database connection failed!!`, error.message);
         process.exit(1);
     }
 }

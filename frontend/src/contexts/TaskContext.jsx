@@ -17,49 +17,122 @@ export const TaskProvider = ({ children }) => {
 
   useEffect(() => {
     let isMounted = true;
-    (async () => {
+
+    const fetchTasks = async () => {
       try {
         const res = await axios.get('/api/tasks');
-        if (isMounted) setTasks(res.data);
+        if (isMounted) {
+          if (res.data.success && Array.isArray(res.data.tasks)) {
+            setTasks(res.data.tasks);
+          } else if (Array.isArray(res.data)) {
+            setTasks(res.data);
+          }
+        }
       } catch (e) {
         console.error('Failed to load tasks', e);
       }
-    })();
+    };
+
+    const runSync = async () => {
+      try {
+        console.log("Starting background sync...");
+        await axios.post('/api/mail/sync');
+        console.log("Sync complete, refetching...");
+        if (isMounted) fetchTasks();
+      } catch (e) {
+        console.error('Background Gmail sync failed', e);
+      }
+    };
+
+    // 1. Fetch immediately from DB
+    fetchTasks();
+
+    // 2. Trigger sync in background (non-blocking)
+    runSync();
+
     return () => { isMounted = false; };
   }, []);
 
-  const toggleTaskCompletion = useCallback((taskId) => {
-    setTasks(prevTasks => 
-      prevTasks.map(task => 
-        task.id === taskId 
-          ? { ...task, completed: !task.completed }
-          : task
-      )
-    );
+  const toggleTaskCompletion = useCallback(async (taskId) => {
+    // Optimistic update
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
+    if (taskIndex === -1) return;
+    const oldTask = tasks[taskIndex];
+    const newStatus = oldTask.completed ? "Pending" : "Completed";
+
+    // Update local state immediately
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, completed: !t.completed, status: newStatus } : t));
+
+    try {
+      await axios.patch(`/api/tasks/${taskId}`, { status: newStatus });
+    } catch (error) {
+      console.error("Failed to update task completion", error);
+      // Revert on failure
+      setTasks(prev => prev.map(t => t.id === taskId ? oldTask : t));
+    }
+  }, [tasks]);
+
+  const addTask = useCallback(async (newTask) => {
+    try {
+      const res = await axios.post('/api/tasks', newTask);
+      if (res.data.success) {
+        // Adapt backend task format to frontend format if necessary
+        const t = res.data.task;
+        const formattedTask = {
+          id: String(t._id),
+          action: t.action,
+          task_description: "",
+          deadline: t.deadline,
+          priority: t.priority,
+          source: t.source || t.Source || "Manual",
+          category: t.source || t.Source || "Manual",
+          completed: t.status === "Completed",
+          created_at: t.createdAt
+        };
+        setTasks(prev => [...prev, formattedTask]);
+      }
+    } catch (error) {
+      console.error("Failed to add task", error);
+    }
   }, []);
 
-  const addTask = useCallback((newTask) => {
-    const task = {
-      id: Date.now(),
-      ...newTask,
-      completed: false,
-      created_at: new Date().toISOString()
-    };
-    setTasks(prevTasks => [...prevTasks, task]);
+  const updateTask = useCallback(async (taskId, updates) => {
+    // Optimistic update
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+    try {
+      await axios.patch(`/api/tasks/${taskId}`, updates);
+    } catch (error) {
+      console.error("Failed to update task", error);
+      // Re-fetch to sync state would be safest, or revert if complex
+    }
   }, []);
 
-  const updateTask = useCallback((taskId, updates) => {
-    setTasks(prevTasks => 
-      prevTasks.map(task => 
-        task.id === taskId 
-          ? { ...task, ...updates }
-          : task
-      )
-    );
-  }, []);
+  const deleteTask = useCallback(async (taskId) => {
+    // Optimistic update
+    const oldTasks = tasks;
+    setTasks(prev => prev.filter(t => t.id !== taskId));
+    try {
+      await axios.delete(`/api/tasks/${taskId}`);
+    } catch (error) {
+      console.error("Failed to delete task", error);
+      setTasks(oldTasks);
+    }
+  }, [tasks]);
 
-  const deleteTask = useCallback((taskId) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+  const syncGmail = useCallback(async () => {
+    try {
+      // Trigger Gmail + ML sync
+      await axios.post('/api/mail/sync');
+
+      const res = await axios.get('/api/tasks');
+      if (res.data.success && Array.isArray(res.data.tasks)) {
+        setTasks(res.data.tasks);
+      } else if (Array.isArray(res.data)) {
+        setTasks(res.data);
+      }
+    } catch (e) {
+      console.error('Gmail sync failed', e);
+    }
   }, []);
 
   const getTasksByDate = useCallback((date) => {
@@ -100,7 +173,8 @@ export const TaskProvider = ({ children }) => {
     updateTask,
     deleteTask,
     getTasksByDate,
-    getTasksByStatus
+    getTasksByStatus,
+    syncGmail
   };
 
   return (

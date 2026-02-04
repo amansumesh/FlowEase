@@ -1,14 +1,20 @@
 import React, { useState } from "react";
-import { Mail, Calendar, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Mail, Calendar, Clock, CheckCircle2, AlertCircle, Plus } from "lucide-react";
 import { useTasks } from "../../contexts/TaskContext";
-
+import AddTaskForm from "../../components/AddTaskForm";
 
 function TasksPage() {
   const [selectedTab, setSelectedTab] = useState("all");
-  const { getTasksByStatus, toggleTaskCompletion } = useTasks();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { getTasksByStatus, toggleTaskCompletion, addTask } = useTasks();
 
   const handleComplete = (taskId) => {
     toggleTaskCompletion(taskId);
+  };
+
+  const handleAddTask = (newTask) => {
+    addTask(newTask);
+    setIsModalOpen(false);
   };
 
   const filteredTasks = getTasksByStatus(selectedTab);
@@ -36,19 +42,34 @@ function TasksPage() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-md">
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6">
-        {["all", "urgent", "upcoming", "completed"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setSelectedTab(tab)}
-            className={`px-4 py-2 rounded-xl transition ${selectedTab === tab ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
+    <div className="bg-white p-6 rounded-2xl shadow-md relative">
+      <AddTaskForm
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        checkSubmit={handleAddTask}
+      />
+
+      {/* Tabs and Add Button */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex gap-2">
+          {["all", "urgent", "upcoming", "completed"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setSelectedTab(tab)}
+              className={`px-4 py-2 rounded-xl transition ${selectedTab === tab ? "bg-blue-500 text-white" : "bg-gray-200"
+                }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
+        >
+          <Plus size={20} />
+          <span>Add Task</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-6 gap-4 font-semibold text-gray-600 border-b pb-3">
@@ -68,15 +89,17 @@ function TasksPage() {
               className="grid grid-cols-6 gap-4 items-center p-3 rounded-xl hover:bg-gray-50 transition"
             >
               <div className="col-span-1">
-                <div className="font-medium text-gray-800">{task.task_title}</div>
+                <div className="font-medium text-gray-800">{task.action}</div>
               </div>
 
               {/* Source */}
               <span className="flex items-center gap-2 text-gray-700">
-                {task.source === "Email" ? (
+                {task.source === "Gmail" ? (
                   <Mail className="w-4 h-4 text-gray-500" />
-                ) : (
+                ) : task.source === "Calendar" ? (
                   <Calendar className="w-4 h-4 text-gray-500" />
+                ) : (
+                  <CheckCircle2 className="w-4 h-4 text-gray-500" />
                 )}
                 {task.source}
               </span>
