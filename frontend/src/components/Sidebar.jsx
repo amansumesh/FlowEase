@@ -56,11 +56,18 @@ const Sidebar = ({ active, setActive }) => {
         <img src="src/assets/sih-logo.png" alt="sih-logo" className="w-32 h-auto" />
       </div>
       <div className="p-2 bg-purple-600 rounded-lg m-2 flex items-center gap-3">
-        <img
-          src={user?.profilePic || "/default-avatar.png"}
-          alt="profile"
-          className="h-10 w-10 rounded-full"
-        />
+        {user?.profilePic ? (
+          <img
+            src={user.profilePic}
+            alt="profile"
+            className="h-10 w-10 rounded-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="h-10 w-10 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+            {user?.name ? user.name[0].toUpperCase() : "U"}
+          </div>
+        )}
         <div>
           <p className="text-sm font-semibold text-white/85">{user?.name || "User"}</p>
           <p className="text-xs text-white/85">{user?.email || "user@example.com"}</p>
